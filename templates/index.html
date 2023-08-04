@@ -21,18 +21,73 @@ font-size: xx-large;overscroll-behavior: none;">{%load static%}
         Speed: <span id="speed"> </span> %
         Angle: <span id="angle"> </span>
         <h4 class="direction"></h4> 
-        <div>
-            <img style="
+         <div>
+             <img id="cama" style="
             position: fixed;
             width: 29vw;
-        " src="{% url 'live_camera' %}">
-        </div>
+        " >
+        </div> 
        
     </p>
-    
+    {{ room_name|json_script:"room-name" }}
     <canvas id="canvas" name="game"></canvas>
    
     <script src="{% static 'jquery.min.js'%}"></script>
+    <script>
+        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        var connection = new WebSocket('ws://'+ window.location.hostname +':'+window.location.port+ '/ws/sc/sc/');
+        connection.onopen = function () {
+            //connection.send('Connect ' + new Date());
+            console.log('hello')
+        };
+        connection.onerror = function (error) {
+            console.log('WebSocket Error ', error);
+            alert('WebSocket Error ', error);
+        };
+        connection.onmessage = function (e) {
+            console.log('Server: ', e.data);
+        };
+
+        function send(x,y,s,a){
+            var data = {"x":x,"y":y,"s":s,"a":a};
+            data = JSON.stringify(data);
+            //console.log(data);
+            connection.send(data);
+        }
+        var soc = new WebSocket('ws://'+ window.location.hostname +':'+window.location.port+ '/ws/rc/rc/');
+       
+        soc.onopen = function(e){
+            //console.log("open", e.data);
+            soc.send('ww')
+        };
+        soc.onmessage = function(e){
+           
+            //console.log("message", JSON.parse(e.data));
+            let  imgElem =  document.getElementById("cama");
+            
+            imgElem.setAttribute('src', "data:image/jpeg;base64,"+JSON.parse(e.data));
+    
+        };
+        
+        let  imgElem =  document.getElementById("cama");
+        let er =0
+      
+        
+        function imags(){
+            
+                //console.log("open", e.data);
+                soc.send('ww')
+            
+           
+            
+            console.log(22)
+            
+        }
+         
+        
+        setInterval(imags, 100)
+       
+    </script>
     <script>
         var canvas, ctx;
 
@@ -130,12 +185,13 @@ font-size: xx-large;overscroll-behavior: none;">{%load static%}
             document.getElementById("y_coordinate").innerText = 0;
             document.getElementById("speed").innerText = 0;
             document.getElementById("angle").innerText = 0;
+            send(0,0,0,0);
             //yyconsole.log(0,0,0,0);
-            $.ajax(
+            /*$.ajax(
                 {
                     type: "POST",
                     url: "{% url 'motor' %}",
-                    async: true,
+                    //async: true,
                     data: {
                         x: 0,
                         y: 0,
@@ -151,7 +207,7 @@ font-size: xx-large;overscroll-behavior: none;">{%load static%}
 
 
                 }
-                  })
+                  })*/
 
         }
 
@@ -195,13 +251,13 @@ font-size: xx-large;overscroll-behavior: none;">{%load static%}
                 document.getElementById("y_coordinate").innerText = y_relative ;
                 document.getElementById("speed").innerText = speed;
                 document.getElementById("angle").innerText = angle_in_degrees;
-
+                send( x_relative,y_relative,speed,angle_in_degrees);
                 //console.log(x_relative,y_relative,speed,angle_in_degrees);
-                $.ajax(
+                /*$.ajax(
                 {
                     type: "POST",
                     url: "{%url 'motor' %}",
-                    async: true,
+                    //async: true,
                     data: {
                         x: x_relative,
                         y: y_relative,
@@ -217,7 +273,7 @@ font-size: xx-large;overscroll-behavior: none;">{%load static%}
 
 
                 }
-                  })
+                  })*/
             }
         } 
     </script>

@@ -10,7 +10,7 @@ def livefe(request):
         return StreamingHttpResponse(camera.gen(cam), content_type="multipart/x-mixed-replace;boundary=frame")
     except:  # This is bad!
         pass
-
+    return HttpResponse('hello')
 
 def index(request ,*args, **kwargs):
     return render(request,'index.html',{"room_name": 'joystick'})

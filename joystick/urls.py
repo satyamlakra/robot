@@ -18,7 +18,7 @@ from django.urls import path
 from joystick import views
 urlpatterns = [
     path("", views.index , name='index'),
-    path('camera/', views.livefe, name="live_camera"),
+    # path('camera/', views.livefe, name="live_camera"),
     path('motor/', views.motorcontrol, name="motor"),
 
 

@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    # "daphne",
+    "daphne",
     "joystick.apps.JoystickConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -69,8 +69,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "robot.wsgi.application"
-# ASGI_APPLICATION = "robot.asgi.application"
+# WSGI_APPLICATION = "robot.wsgi.application"
+ASGI_APPLICATION = "robot.asgi.application"
 
 
 # Database
