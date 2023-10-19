@@ -13,7 +13,7 @@ from urllib import request
 ledpin = 23 	
 ledpin1 = 24							
 GPIO.setwarnings(False)			
-GPIO.setmode(GPIO.BOARD)		
+GPIO.setmode(GPIO.BCM)		
 GPIO.setup(ledpin,GPIO.OUT)
 GPIO.setup(26,GPIO.OUT)
 GPIO.output(26,GPIO.LOW)
