@@ -7,10 +7,29 @@ from  joystick import camera
 import operator
 # from django_q.tasks import async_task
 from asgiref.sync import async_to_sync
-
+import RPi.GPIO as GPIO
 
 from urllib import request
-
+ledpin = 23 	
+ledpin1 = 24							
+GPIO.setwarnings(False)			
+GPIO.setmode(GPIO.BOARD)		
+GPIO.setup(ledpin,GPIO.OUT)
+GPIO.setup(26,GPIO.OUT)
+GPIO.output(26,GPIO.LOW)
+GPIO.setup(16,GPIO.OUT)
+GPIO.output(16,GPIO.LOW)
+GPIO.setup(20,GPIO.OUT)
+GPIO.output(20,GPIO.LOW)
+GPIO.setup(21,GPIO.OUT)
+GPIO.output(21,GPIO.LOW)
+pi_pwm = GPIO.PWM(ledpin,1000)		
+pi_pwm.start(0)	
+pi_pwm1 = GPIO.PWM(ledpin1,1000)		
+pi_pwm1.start(0)
+def cdu(x):
+    pi_pwm.ChangeDutyCycle(x)
+    pi_pwm1.ChangeDutyCycle(x)
 class NewConsumer(AsyncWebsocketConsumer):
     async def connect(self):
        
@@ -45,21 +64,54 @@ class NewConsumer(AsyncWebsocketConsumer):
         s=int(message.get('s'))
         a=int(message.get('a'))
         if x==0 and y==0 and s==0 and a==0:
+            cdu(s)
+            GPIO.output(26,GPIO.LOW)
+            GPIO.output(16,GPIO.LOW)
+            GPIO.output(20,GPIO.LOW)
+            GPIO.output(21,GPIO.LOW)
            await self.channel_layer.group_send(
                                             self.room_group_name, {"type": "live_message", "message": 'motorstop'})
         elif x in range(-50,50) and y in range(-205,-50):
+            cdu(s)
+            GPIO.output(16,GPIO.LOW)
+            GPIO.output(21,GPIO.LOW)
+            GPIO.output(20,GPIO.HIGH)
+            GPIO.output(26,GPIO.HIGH)
+            
+           
             await self.channel_layer.group_send(
                                             self.room_group_name, {"type": "live_message", "message": 'forward'})
         elif x in range(-50,50) and y in range(50,205):
+                        cdu(s)
+                        GPIO.output(26,GPIO.LOW)
+                        GPIO.output(20,GPIO.LOW)
+                        GPIO.output(16,GPIO.HIGH)
+                        GPIO.output(21,GPIO.HIGH) 
                         await self.channel_layer.group_send(
                                             self.room_group_name, {"type": "live_message", "message": 'backward'}) 
         elif y in range(-50,50) and x in range(-205,-50):
+                        cdu(s)
+                        
+                        GPIO.output(16,GPIO.LOW)
+                        GPIO.output(20,GPIO.LOW)
+                        GPIO.output(26,GPIO.HIGH)
+                        GPIO.output(21,GPIO.HIGH)
                         await self.channel_layer.group_send(
                                             self.room_group_name, {"type": "live_message", "message": 'left'})
         elif y in range(-50,50) and x in range(50,205):
+            cdu(s)
+            GPIO.output(26,GPIO.LOW)
+            GPIO.output(16,GPIO.HIGH)
+            GPIO.output(20,GPIO.LOW)
+            GPIO.output(21,GPIO.HIGH)
             await self. channel_layer.group_send(
                                             self.room_group_name, {"type": "live_message", "message": 'right'}) 
         else:
+            cdu(s)
+            GPIO.output(26,GPIO.LOW)
+            GPIO.output(16,GPIO.HIGH)
+            GPIO.output(20,GPIO.HIGH)
+            GPIO.output(21,GPIO.LOW)
             await self.channel_layer.group_send(
                                             self.room_group_name, {"type": "live_message", "message": 'motorstop'})
             
